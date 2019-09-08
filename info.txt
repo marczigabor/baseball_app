@@ -1,0 +1,6 @@
+npm start -> starts expo in browser
+
+open expo app on phone
+
+read QR code
+
