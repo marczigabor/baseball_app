@@ -9,6 +9,10 @@
     "resolveJsonModule": true,
     "allowJs": true,
     "checkJs": false
-  }
+  },
+  "exclude": [
+    "node_modules",
+    "**/*.ts"
+  ]  
 }
  

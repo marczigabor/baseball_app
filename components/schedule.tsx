@@ -9,9 +9,31 @@ export default class Schedule extends React.Component  {
     this.state = { isLoading: true};
   }
 
+  componentWillReceiveProps(props) {
+    console.log("ez a date " + props.date);
+    this.setState({date: this.props.date});
+    this.getSchedule();
+    return props;
+  }
+
   componentDidMount(){
+    this.setState({date: this.props.date});
+   this.getSchedule(); 
+  }
+
+  getSchedule(){
 //    return fetch('http://lbgonemac:8080/api/v1/baseball/schedule?year=2019&month=9&day=7')
-    return fetch('http://192.168.0.16:8080/api/v1/baseball/schedule?year=2019&month=9&day=7')
+
+    if (!this.state || !this.state.date){
+      return;
+    }
+
+    var dd = String(this.state.date.getDate());
+    var mm = String(this.state.date.getMonth() + 1);
+    var yyyy = this.state.date.getFullYear();
+    console.log(yyyy + " " + mm + " " +dd);
+
+    return fetch(`http://192.168.0.16:8080/api/v1/baseball/schedule?year=${yyyy}&month=${mm}&day=${dd}`)
       .then((response) => response.json())
       .then((responseJson) => {
 
@@ -33,7 +55,7 @@ export default class Schedule extends React.Component  {
 
     if(this.state.isLoading){
       return(
-        <View style={{flex: 1, padding: 20}}>
+        <View style={{flex: 1, padding: 20, alignContent:'center'}}>
           <ActivityIndicator/>
         </View>
       )

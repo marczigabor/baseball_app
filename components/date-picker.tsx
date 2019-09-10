@@ -4,13 +4,14 @@ import { View, ImageBackground } from 'react-native'
 
 export default class MyDatePicker extends Component {
   constructor(props){
-    super(props)
+    super(props);
+    console.log(this.props);
     this.state = {date:this.getDate()}
   }
 
   getDate(){
 
-    var today = new Date();
+    var today = this.props.date || new Date();
     var dd = String(today.getDate()).padStart(2, '0');
     var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
     var yyyy = today.getFullYear();
@@ -43,7 +44,10 @@ export default class MyDatePicker extends Component {
                     display:'none'
             },
             }}
-            onDateChange={(date) => {this.setState({date: date})}}
+            onDateChange={(date) => {
+                this.setState({date: date});
+                this.props.setDate(date);
+            }}
         />
         </View>
         </ImageBackground>
