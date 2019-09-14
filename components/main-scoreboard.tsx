@@ -17,16 +17,15 @@ export default class MainScoreboard extends React.Component  {
         isLoading: true,
         date: new Date(d),
         dataSource: [],
-        selectedGameId : null
+        selectedGame : null
     }
   }
 
-  setSelectedGame =(id, item) => {
+  setSelectedGame =(id, main) => {
     console.log(id);
     let newState = {...this.state};
     newState.isLoading = true;
-    newState.selectedGameId = id;
-    newState.selectedItem = item;
+    newState.selectedGame = {id: id, main: main, details: null};
 
     this.setState(newState, () => {
         this.getLineScore();
@@ -39,13 +38,13 @@ export default class MainScoreboard extends React.Component  {
     newState.isLoading = true;
     this.setState(newState);    
 
-    return fetch(`http://192.168.0.16:8080/api/v1/baseball/linescore?game_id=${this.state.selectedGameId}`)
+    return fetch(`http://192.168.0.16:8080/api/v1/baseball/linescore?game_id=${this.state.selectedGame.id}`)
       .then((response) => response.json())
       .then((responseJson) => {
 
             let newState = Object.assign({}, this.state);
             newState.isLoading = false;
-            newState.selectedGame = responseJson;
+            newState.selectedGame.details = responseJson;
             this.setState(newState);
 
       })
@@ -57,7 +56,7 @@ export default class MainScoreboard extends React.Component  {
   setDate = (date) => {
     console.log(date);
 
-    this.setState({date: new Date(date), selectedGameId: null}, () => {
+    this.setState({date: new Date(date), selectedGame: null}, () => {
       this.getSchedule(); 
     });
 
@@ -72,7 +71,7 @@ export default class MainScoreboard extends React.Component  {
 
     let newState = Object.assign({}, this.state);
     newState.isLoading = true;
-    newState.selectedGameId = null;
+    newState.selectedGame = null;
     this.setState(newState);
 
     var dd = String(this.state.date.getDate());
@@ -98,23 +97,28 @@ export default class MainScoreboard extends React.Component  {
   }
 
   onBack = ()=>{
-    this.setState({selectedGameId:null, selectedGame:null, selectedItem: null });
+    this.setState({selectedGame:null});
   }
 
   render(){
 
     let body;
+    let selectedGame = this.state.selectedGame;
 
-    if (this.state.selectedGame){
-      body = <LineScore selectedGame={this.state.selectedGame} selectedItem={this.state.selectedItem} onBack={this.onBack} />
+    if (selectedGame && selectedGame.details &&  selectedGame.main){
+      body = <LineScore selectedGame={selectedGame} onBack={this.onBack} />
     } else {
       body = <Schedule dataSource={this.state.dataSource} isLoading={this.state.isLoading} setSelectedGame={this.setSelectedGame} />
     }
 
     return(
         <React.Fragment>
+          <View style = {{flex: 1}}>
             <MyDatePicker date={this.state.date} setDate={this.setDate}/>
+          </View>
+          <View style = {{flex: 4}}>
             {body}
+          </View>
         </React.Fragment>
     );
   }

@@ -1,5 +1,6 @@
 import React from 'react';
 import { FlatList, ActivityIndicator, Text, View, StyleSheet, ScrollView, Platform, Button  } from 'react-native';
+import InningsScore from './innings-score';
 
 
 export default class LineScore extends React.Component  {
@@ -11,43 +12,51 @@ export default class LineScore extends React.Component  {
 
   render(){
 
-      const homeScore = this.props.selectedGame.homeScore;
-      const awayScore = this.props.selectedGame.awayScore;
+      const homeScore = this.props.selectedGame.details.homeScore;
+      const awayScore = this.props.selectedGame.details.awayScore;
+      const innings  = this.props.selectedGame.details.innings;
 
-      const selectedItem = this.props.selectedItem;
+      const main = this.props.selectedGame.main;
 
       return(
         <View style = { styles.container }>
-        <ScrollView style={{flex: 1, paddingTop:20}}>
+          <View style={{flex: 3}}>
 
-          <View style = { styles.rowContainer }>
-            <Text style = { styles.text }>{ selectedItem.homeScore.name}</Text>
-            <Text style = { styles.text }>{ selectedItem.awayScore.name}</Text> 
+            <View style = { styles.rowContainer }>
+              <Text style = { styles.text }>{ main.awayScore.name}</Text> 
+              <Text style = { styles.text }>{ main.homeScore.name}</Text>
+            </View>
+
+            <View style = { styles.rowContainer }>
+              <Text style = { styles.text }>{ awayScore.runs}</Text>
+              <Text style = { styles.text }>Runs</Text>
+              <Text style = { styles.text }>{ homeScore.runs}</Text>
+            </View>
+
+            <View style = { styles.rowContainer }>
+              <Text style = { styles.text }>{ awayScore.hits}</Text>
+              <Text style = { styles.text }>Hits</Text>
+              <Text style = { styles.text }>{ homeScore.hits}</Text>
+            </View>
+    
+            <View style = { styles.rowContainer }>
+              <Text style = { styles.text }>{ awayScore.errors}</Text>
+              <Text style = { styles.text }>Errors</Text>
+              <Text style = { styles.text }>{ homeScore.errors}</Text>
+            </View>
+
           </View>
 
-          <View style = { styles.rowContainer }>
-            <Text style = { styles.text }>{ homeScore.runs}</Text>
-            <Text style = { styles.text }>Runs</Text>
-            <Text style = { styles.text }>{ awayScore.runs}</Text>
+          <View style={{flex: 6}}>
+            <InningsScore innings={innings}/>
           </View>
 
-          <View style = { styles.rowContainer }>
-            <Text style = { styles.text }>{ homeScore.hits}</Text>
-            <Text style = { styles.text }>Hits</Text>
-            <Text style = { styles.text }>{ awayScore.hits}</Text>
-          </View>
-  
-          <View style = { styles.rowContainer }>
-            <Text style = { styles.text }>{ homeScore.errors}</Text>
-            <Text style = { styles.text }>Errors</Text>
-            <Text style = { styles.text }>{ awayScore.errors}</Text>
+          <View style={{flex: 1}}>
+            <View style = { styles.backButton }>
+                <Button title="Back" onPress={() => this.props.onBack()}/>
+            </View>
           </View>
 
-      </ScrollView>
-      
-        <View style = { styles.backButton }>
-            <Button title="Back" onPress={() => this.props.onBack()}/>
-        </View>
       </View>
       )
   }
@@ -59,31 +68,27 @@ const styles = StyleSheet.create(
     {
       flex: 1,
       paddingTop: (Platform.OS === 'ios') ? 20 : 0,
-      marginBottom: 20
+      marginBottom: 10
     },
 
     backButton: {
       width: '100%',
-      height: '10%',
       justifyContent: 'center',
-      alignItems: 'center',
-      marginTop: 50
+      alignItems: 'center'
     },
 
     rowContainer: {
-      flex: 1, 
+      flex: 0.8, 
       flexDirection: 'row',
       justifyContent: 'space-between',
     },
-    
    
     text:
     {
       fontSize: 18,
       color: 'black',
-      padding: 15,
-      marginLeft: 15,
-      marginRight: 15
+      marginLeft: 30,
+      marginRight: 30
     }
     
   });

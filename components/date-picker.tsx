@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import DatePicker from 'react-native-datepicker'
-import { View, ImageBackground } from 'react-native'
+import { View, ImageBackground, StyleSheet, Platform } from 'react-native'
 
 export default class MyDatePicker extends Component {
   constructor(props){
@@ -22,15 +22,11 @@ export default class MyDatePicker extends Component {
 
   render(){
     return (
-        <View style={{height: 150}}>
-        <ImageBackground source={require('./../assets/header.jpg')} style={{width: '100%', height: '100%'}}>
-            <View style={{flex: 1, 
-                alignItems: 'center',
-                justifyContent: 'center', 
-                //backgroundColor: 'lightblue'
-            }}>
+        <View style={styles.container}>
+        <ImageBackground source={require('./../assets/header.jpg')} style={styles.backgroundImage}>
+            <View style={ styles.innnerContainer}>
         <DatePicker
-            style={{width: 150, backgroundColor:'white'}}
+            style={styles.datePicker}
             date={this.state.date}
             mode="date"
             placeholder="select date"
@@ -55,3 +51,31 @@ export default class MyDatePicker extends Component {
     )
   }
 }
+
+const styles = StyleSheet.create(
+  {
+    container:
+    {
+      flex: 1,
+      paddingTop: (Platform.OS === 'ios') ? 20 : 0
+    },
+
+    innnerContainer:
+    {
+        flex: 1, 
+        alignItems: 'center',
+        justifyContent: 'center'
+    },
+
+    backgroundImage: {
+      width: '100%', 
+      height: '100%'      
+    },
+
+    datePicker:
+    {
+      width: 150, 
+      backgroundColor:'white'      
+    }
+  }
+)
