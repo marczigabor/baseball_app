@@ -21,11 +21,12 @@ export default class MainScoreboard extends React.Component  {
     }
   }
 
-  setSelectedGameId =(id) => {
+  setSelectedGame =(id, item) => {
     console.log(id);
     let newState = {...this.state};
     newState.isLoading = true;
     newState.selectedGameId = id;
+    newState.selectedItem = item;
 
     this.setState(newState, () => {
         this.getLineScore();
@@ -46,7 +47,6 @@ export default class MainScoreboard extends React.Component  {
             newState.isLoading = false;
             newState.selectedGame = responseJson;
             this.setState(newState);
-            console.log(responseJson);
 
       })
       .catch((error) =>{
@@ -56,8 +56,11 @@ export default class MainScoreboard extends React.Component  {
 
   setDate = (date) => {
     console.log(date);
-    this.setState({date: new Date(date)})
-    this.getSchedule(); 
+
+    this.setState({date: new Date(date), selectedGameId: null}, () => {
+      this.getSchedule(); 
+    });
+
   };
 
   componentDidMount(){
@@ -84,6 +87,7 @@ export default class MainScoreboard extends React.Component  {
             console.log("done");
             let newState = Object.assign({}, this.state);
             newState.isLoading = false;
+            newState.selectedGame = null;
             newState.dataSource = responseJson.scores;
             this.setState(newState);
 
@@ -93,14 +97,18 @@ export default class MainScoreboard extends React.Component  {
       });
   }
 
+  onBack = ()=>{
+    this.setState({selectedGameId:null, selectedGame:null, selectedItem: null });
+  }
+
   render(){
 
     let body;
 
     if (this.state.selectedGame){
-      body = <LineScore selectedGame={this.state.selectedGame} />
+      body = <LineScore selectedGame={this.state.selectedGame} selectedItem={this.state.selectedItem} onBack={this.onBack} />
     } else {
-      body = <Schedule dataSource={this.state.dataSource} isLoading={this.state.isLoading} setSelectedGameId={this.setSelectedGameId} />
+      body = <Schedule dataSource={this.state.dataSource} isLoading={this.state.isLoading} setSelectedGame={this.setSelectedGame} />
     }
 
     return(

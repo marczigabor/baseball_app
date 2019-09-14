@@ -9,8 +9,8 @@ export default class Schedule extends React.Component  {
   
   }
 
-  onGamePress(id){
-    this.props.setSelectedGameId(id);
+  onGamePress(id, item){
+    this.props.setSelectedGame(id, item);
   }
 
   render(){
@@ -31,7 +31,7 @@ export default class Schedule extends React.Component  {
           this.props.dataSource.map(( item ) =>
           (
             <View key = { item.id }>
-              <TouchableOpacity onPress={()=> this.onGamePress(item.id) }>
+              <TouchableOpacity onPress={()=> this.onGamePress(item.id, item) }>
 
                   <View style = { styles.rowContainer }>
                     <Text style = { styles.textLeft }>{ item.awayScore.name}</Text>
