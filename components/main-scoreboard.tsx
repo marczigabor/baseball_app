@@ -3,6 +3,7 @@ import { FlatList, ActivityIndicator, Text, View, StyleSheet, ScrollView, Platfo
 import MyDatePicker from './date-picker';
 import Schedule from './schedule';
 import LineScore from './line-score';
+import BaseballService from '../services/baseball_api.service';
 
 
 export default class MainScoreboard extends React.Component  {
@@ -16,13 +17,12 @@ export default class MainScoreboard extends React.Component  {
     this.state = {
         isLoading: true,
         date: new Date(d),
-        dataSource: [],
+        schedule: [],
         selectedGame : null
     }
   }
 
   setSelectedGame =(id, main) => {
-    console.log(id);
     let newState = {...this.state};
     newState.isLoading = true;
     newState.selectedGame = {id: id, main: main, details: null};
@@ -38,23 +38,16 @@ export default class MainScoreboard extends React.Component  {
     newState.isLoading = true;
     this.setState(newState);    
 
-    return fetch(`http://192.168.0.16:8080/api/v1/baseball/linescore?game_id=${this.state.selectedGame.id}`)
-      .then((response) => response.json())
-      .then((responseJson) => {
-
-            let newState = Object.assign({}, this.state);
-            newState.isLoading = false;
-            newState.selectedGame.details = responseJson;
-            this.setState(newState);
-
-      })
-      .catch((error) =>{
-        console.error(error);
-      });
+    BaseballService.getLineScore(this.state.selectedGame.id).then((data) => {
+      let newState = Object.assign({}, this.state);
+      newState.isLoading = false;
+      newState.selectedGame.details = data;
+      this.setState(newState);
+  
+    });
   }
 
   setDate = (date) => {
-    console.log(date);
 
     this.setState({date: new Date(date), selectedGame: null}, () => {
       this.getSchedule(); 
@@ -67,7 +60,6 @@ export default class MainScoreboard extends React.Component  {
   }
 
   getSchedule(){
-//    return fetch('http://lbgonemac:8080/api/v1/baseball/schedule?year=2019&month=9&day=7')
 
     let newState = Object.assign({}, this.state);
     newState.isLoading = true;
@@ -77,23 +69,17 @@ export default class MainScoreboard extends React.Component  {
     var dd = String(this.state.date.getDate());
     var mm = String(this.state.date.getMonth() + 1);
     var yyyy = this.state.date.getFullYear();
-    console.log(yyyy + " " + mm + " " +dd);
 
-    return fetch(`http://192.168.0.16:8080/api/v1/baseball/schedule?year=${yyyy}&month=${mm}&day=${dd}`)
-      .then((response) => response.json())
-      .then((responseJson) => {
+    BaseballService.getSchedule(yyyy, mm, dd).then((data)=>{
+      
+      let newState = Object.assign({}, this.state);
+      newState.isLoading = false;
+      newState.selectedGame = null;
+      newState.schedule = data;
+      this.setState(newState);
 
-            console.log("done");
-            let newState = Object.assign({}, this.state);
-            newState.isLoading = false;
-            newState.selectedGame = null;
-            newState.dataSource = responseJson.scores;
-            this.setState(newState);
+    });
 
-      })
-      .catch((error) =>{
-        console.error(error);
-      });
   }
 
   onBack = ()=>{
@@ -108,7 +94,7 @@ export default class MainScoreboard extends React.Component  {
     if (selectedGame && selectedGame.details &&  selectedGame.main){
       body = <LineScore selectedGame={selectedGame} onBack={this.onBack} />
     } else {
-      body = <Schedule dataSource={this.state.dataSource} isLoading={this.state.isLoading} setSelectedGame={this.setSelectedGame} />
+      body = <Schedule dataSource={this.state.schedule} isLoading={this.state.isLoading} setSelectedGame={this.setSelectedGame} />
     }
 
     return(
